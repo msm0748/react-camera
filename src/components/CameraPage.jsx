@@ -60,7 +60,7 @@ const CameraPage = () => {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
       <div className="relative w-full h-80">
-        <Camera ref={cameraRef} aspectRatio="cover" />
+        <Camera ref={cameraRef} aspectRatio="cover" facingMode="environment" />
         {/* 촬영 가이드용 사각 박스 */}
         <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center">
           <div className="border-4 border-green-500 w-2/3 h-2/3"></div>
