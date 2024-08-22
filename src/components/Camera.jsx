@@ -9,6 +9,7 @@ export default function CameraComponent() {
     try {
       const photo = await camera.current.takePhoto();
       setImage(photo);
+      // console.log(camera.current.switchCamera());
     } catch (error) {
       console.error('Error taking photo: ', error);
     }
@@ -16,9 +17,11 @@ export default function CameraComponent() {
 
   return (
     <div className="w-dvw h-dvh relative">
-      <Camera ref={camera} />
+      <Camera ref={camera} facingMode="environment" />
       <div className="border-4 absolute z-50 w-80 h-80 top-20 left-0 right-0 mx-auto border-red-500"></div>
-      <button onClick={handleTakePhoto}>Take Photo</button>
+      <button className="absolute z-50" onClick={handleTakePhoto}>
+        Take Photo
+      </button>
       {image && <img src={image} alt="" />}
     </div>
   );
