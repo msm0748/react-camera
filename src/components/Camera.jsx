@@ -9,7 +9,7 @@ export default function CameraComponent() {
     try {
       const photo = await camera.current.takePhoto();
       setImage(photo);
-      // console.log(camera.current.switchCamera());
+      console.log(camera.current.switchCamera());
     } catch (error) {
       console.error('Error taking photo: ', error);
     }
