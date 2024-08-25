@@ -1,7 +1,6 @@
-// UploadPage.js
 import React, { useState } from 'react';
-import axios from 'axios';
 import toast, { Toaster } from 'react-hot-toast';
+import { api } from '../lib/api';
 
 const UploadPage = () => {
   const [image, setImage] = useState(null);
@@ -11,14 +10,14 @@ const UploadPage = () => {
     const reader = new FileReader();
     reader.onloadend = () => {
       setImage(reader.result);
-      sendImageToBackend(reader.result);
+      // sendImageToBackend(reader.result);
     };
     reader.readAsDataURL(file);
   };
 
   const sendImageToBackend = async (imageData) => {
     try {
-      const response = await axios.post('/api/upload', { image: imageData });
+      const response = await api.post('/api/upload', { image: imageData });
       toast.success(response.data.message);
     } catch (error) {
       toast.error('Image upload failed');
