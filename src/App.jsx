@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import './App.css';
 import CameraPage from './components/CameraPage';
-import UploadPage from './components/UploadPage';
+import Desktop from './components/Desktop';
 
 function App() {
   const [isMobile, setIsMobile] = useState(false);
@@ -19,13 +19,7 @@ function App() {
     }
   }, []);
 
-  return (
-    <div className="App">
-      {/* <Camera /> */}
-      {/* <Example /> */}
-      {isMobile ? <CameraPage /> : <UploadPage />}
-    </div>
-  );
+  return <div className="App">{isMobile ? <CameraPage /> : <Desktop />}</div>;
 }
 
 export default App;
