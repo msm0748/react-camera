@@ -1,5 +1,6 @@
 import { useCallback, useState } from 'react';
 import ImageCrop from './ImageCrop';
+import { extractBase64Data } from '../../lib/extractBase64Data';
 
 export default function Desktop() {
   const [image, setImage] = useState(null);
@@ -16,14 +17,16 @@ export default function Desktop() {
   const handleImageChange = useCallback((imgData) => {
     const reader = new FileReader();
     reader.onloadend = () => {
-      setImage(reader.result);
+      const base64 = reader.result;
+      setImage(base64);
     };
     reader.readAsDataURL(imgData);
   }, []);
 
   const handleSubmit = useCallback(async () => {
-    console.log('전송');
-  }, []);
+    const extractBase64 = extractBase64Data(image);
+    console.log(extractBase64);
+  }, [image]);
   return (
     <div className="w-dvw h-dvh flex items-center justify-center bg-gray-100">
       <div className="bg-white p-8 rounded-lg shadow-lg max-w-md w-full">

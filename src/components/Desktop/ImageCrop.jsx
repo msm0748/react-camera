@@ -1,4 +1,4 @@
-import React, { useState, useRef, useCallback, useEffect } from 'react';
+import React, { useState, useRef, useCallback } from 'react';
 import ReactCrop from 'react-image-crop';
 import Modal from 'react-modal';
 import { useDebounceEffect } from '../../hooks/useDebounceEffect';
@@ -129,7 +129,11 @@ export default function ImageCrop({
         <div className="w-full flex flex-col items-center">
           <div className="flex items-center gap-10">
             <div
-              className={`w-[${imageSize.width}px] h-[${imageSize.height}px]`}
+              style={{
+                width: `${imageSize.width}px`,
+                height: `${imageSize.height}px`,
+              }}
+              className="flex justify-center"
             >
               {!!imgSrc && (
                 <ReactCrop
