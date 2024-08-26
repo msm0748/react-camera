@@ -5,6 +5,7 @@ const RangeInputInner = {
   width: '100%',
   height: '100%',
   mask: 'linear-gradient(90deg,transparent 0,#000 2em,#000 calc(50% - 3em),transparent 50%,#000 calc(50% + 3em),#000 calc(100% - 2em),transparent)',
+  cursor: 'grab',
 };
 
 export default function ImageRotator({ rotate, setRotate }) {
@@ -46,13 +47,15 @@ export default function ImageRotator({ rotate, setRotate }) {
     [clampRotate, isDragging, setRotate, startX]
   );
 
-  const handleMouseUp = () => {
+  const handleMouseUp = useCallback(() => {
     setIsDragging(false);
-  };
+  }, []);
 
   return (
     <div className="relative flex justify-center">
-      <span className="absolute bottom-4">{parseInt(rotate)}°</span>
+      <span className="absolute bottom-[18px] text-sm">
+        {parseInt(rotate)}°
+      </span>
       <div
         style={RangeInputInner}
         onMouseDown={handleMouseDown}

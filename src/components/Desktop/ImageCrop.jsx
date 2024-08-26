@@ -1,11 +1,11 @@
-import React, { useState, useRef, useCallback } from 'react';
+import React, { useState, useRef, useCallback, useEffect } from 'react';
 import ReactCrop from 'react-image-crop';
 import Modal from 'react-modal';
-import { useDebounceEffect } from '../hooks/useDebounceEffect';
-import { canvasPreview } from '../lib/canvasPreview';
+import { useDebounceEffect } from '../../hooks/useDebounceEffect';
+import { canvasPreview } from '../../lib/canvasPreview';
 
 import 'react-image-crop/dist/ReactCrop.css';
-import CloseButton from './CloseButton';
+import ModalCloseButton from './ModalCloseButton';
 import ImageRotator from './ImageRotator';
 
 const customStyles = {
@@ -17,6 +17,11 @@ const customStyles = {
     width: '100%',
     height: '100%',
   },
+};
+
+const imageSize = {
+  width: 800,
+  height: 600,
 };
 
 export default function ImageCrop({
@@ -34,7 +39,13 @@ export default function ImageCrop({
     x: 0,
     y: 0,
   });
-  const [completedCrop, setCompletedCrop] = useState();
+  const [completedCrop, setCompletedCrop] = useState({
+    unit: 'px',
+    width: imageSize.width,
+    height: imageSize.height,
+    x: 0,
+    y: 0,
+  });
   const [scale, setScale] = useState(1);
   const [rotate, setRotate] = useState(0);
 
@@ -113,19 +124,18 @@ export default function ImageCrop({
       <div className="relative w-full h-full flex flex-col justify-between items-center">
         <div className="h-16 flex justify-between items-center px-6 bg-white shadow-md w-full">
           <h2 className="text-xl font-bold">이미지 자르기</h2>
-          <CloseButton closeModal={closeModal} />
+          <ModalCloseButton closeModal={closeModal} />
         </div>
         <div className="w-full flex flex-col items-center">
           <div className="flex items-center gap-10">
-            <div className="w-[800px] h-[600px]">
+            <div
+              className={`w-[${imageSize.width}px] h-[${imageSize.height}px]`}
+            >
               {!!imgSrc && (
                 <ReactCrop
                   crop={crop}
                   onChange={(_, percentCrop) => setCrop(percentCrop)}
                   onComplete={(c) => setCompletedCrop(c)}
-                  // aspect={aspect}
-                  // minWidth={400}
-                  // minHeight={100}
                 >
                   <img
                     ref={imgRef}

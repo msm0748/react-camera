@@ -1,31 +1,29 @@
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import ImageCrop from './ImageCrop';
 
 export default function Desktop() {
   const [image, setImage] = useState(null);
   const [modalIsOpen, setIsOpen] = useState(false);
 
-  const openModal = () => {
+  const openModal = useCallback(() => {
     setIsOpen(true);
-  };
+  }, []);
 
-  const closeModal = () => {
+  const closeModal = useCallback(() => {
     setIsOpen(false);
-  };
+  }, []);
 
-  const handleImageChange = (imgData) => {
-    // const file = e.target.files[0];
+  const handleImageChange = useCallback((imgData) => {
     const reader = new FileReader();
     reader.onloadend = () => {
       setImage(reader.result);
     };
     reader.readAsDataURL(imgData);
-  };
+  }, []);
 
-  const handleSubmit = async () => {
+  const handleSubmit = useCallback(async () => {
     console.log('전송');
-    console.log(image);
-  };
+  }, []);
   return (
     <div className="w-dvw h-dvh flex items-center justify-center bg-gray-100">
       <div className="bg-white p-8 rounded-lg shadow-lg max-w-md w-full">
