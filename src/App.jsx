@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import './App.css';
-import CameraPage from './components/CameraPage';
+import Mobile from './components/Mobile';
 import Desktop from './components/Desktop';
 
 function App() {
@@ -19,7 +19,7 @@ function App() {
     }
   }, []);
 
-  return <div className="App">{isMobile ? <CameraPage /> : <Desktop />}</div>;
+  return <div className="App">{isMobile ? <Mobile /> : <Desktop />}</div>;
 }
 
 export default App;

@@ -1,6 +1,8 @@
 import { useCallback, useState } from 'react';
 import ImageCrop from './ImageCrop';
 import { extractBase64Data } from '../../lib/extractBase64Data';
+import { api } from '../../lib/api';
+import moment from 'moment';
 
 export default function Desktop() {
   const [image, setImage] = useState(null);
@@ -25,7 +27,20 @@ export default function Desktop() {
 
   const handleSubmit = useCallback(async () => {
     const extractBase64 = extractBase64Data(image);
-    console.log(extractBase64);
+
+    const today = moment.now();
+
+    try {
+      const response = await api.post('api/image', {
+        json: {
+          image: image,
+          capture_tick: today,
+        },
+      });
+    } catch (error) {
+      console.log(error, 'error');
+    }
+    // console.log(response);
   }, [image]);
   return (
     <div className="w-dvw h-dvh flex items-center justify-center bg-gray-100">
