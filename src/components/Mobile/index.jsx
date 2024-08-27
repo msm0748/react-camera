@@ -116,7 +116,7 @@ export default function Mobile() {
             transform: 'translateX(-50%)',
             borderWidth: `${guideLineBorderWidth}px`,
           }}
-          className="absolute border-white opacity-60 w-3/4 h-28"
+          className="absolute border-white opacity-60 w-4/5 h-36"
         ></div>
       </div>
       <div className="w-full flex justify-around items-center absolute bottom-10 text-white">
