@@ -16,12 +16,14 @@ export default function Desktop() {
   }, []);
 
   const handleImageChange = useCallback((imgData) => {
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      const base64 = reader.result;
-      setImage(base64);
-    };
-    reader.readAsDataURL(imgData);
+    if (imgData) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const base64 = reader.result;
+        setImage(base64);
+      };
+      reader.readAsDataURL(imgData);
+    }
   }, []);
 
   const handleSubmit = useCallback(async () => {
