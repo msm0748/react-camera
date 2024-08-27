@@ -22,17 +22,13 @@ export default function Mobile() {
   useEffect(() => {
     if (guideLineRef.current) {
       const guideLine = guideLineRef.current;
-
-      const guideLineX = guideLine.offsetLeft;
-      const guideLineY = guideLine.offsetTop;
-      const guideLineWidth = guideLine.offsetWidth;
-      const guideLineHeight = guideLine.offsetHeight;
+      const rect = guideLine.getBoundingClientRect();
 
       setGuideLinePosition({
-        x: guideLineX,
-        y: guideLineY,
-        width: guideLineWidth,
-        height: guideLineHeight,
+        x: rect.left,
+        y: rect.top,
+        width: rect.width,
+        height: rect.height,
       });
     }
   }, [guideLineRef]);
@@ -83,7 +79,6 @@ export default function Mobile() {
           ></div>
         </div>
       </div>
-      <div className="absolute w-1 h-1 bg-cyan-950 left-[69px] top-[402px]"></div>
       <div className="w-full flex justify-around items-center absolute bottom-10">
         <div>
           {cameraRef.current?.torchSupported ? (
