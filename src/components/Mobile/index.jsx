@@ -27,7 +27,6 @@ export default function Mobile() {
   const handleCapture = () => {
     const photo = cameraRef.current.takePhoto();
 
-    console.log(cameraRef.current.switchCamera());
     setImage(photo);
     setGuideLine();
   };
@@ -102,6 +101,15 @@ export default function Mobile() {
           facingMode="environment"
           numberOfCamerasCallback={(i) => setNumberOfCameras(i)}
           videoSourceDeviceId={activeDeviceId}
+          errorMessages={{
+            noCameraAccessible:
+              'No camera device accessible. Please connect your camera or try a different browser.',
+            permissionDenied:
+              'Permission denied. Please refresh and give camera permission.',
+            switchCamera:
+              'It is not possible to switch camera to different one because there is only one video device accessible.',
+            canvas: 'Canvas is not supported.',
+          }}
         />
         {/* 촬영 가이드용 사각 박스 */}
         <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center">
