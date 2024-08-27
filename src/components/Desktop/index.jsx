@@ -18,9 +18,13 @@ export default function Desktop() {
   }, []);
 
   const handleImageChange = useCallback(async (imgData) => {
-    const base64 = await convertToBase64(imgData);
-    setImage(base64);
-    setOriginalImage(base64);
+    try {
+      const base64 = await convertToBase64(imgData);
+      setImage(base64);
+      setOriginalImage(base64);
+    } catch (error) {
+      console.log(error, 'error');
+    }
   }, []);
 
   const handleSubmit = useCallback(async () => {

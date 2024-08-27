@@ -9,5 +9,7 @@ export const convertToBase64 = (imgData) => {
       reader.onerror = (error) => reject(error); // 오류가 발생하면 Promise를 거부
       reader.readAsDataURL(imgData);
     });
+  } else {
+    return Promise.reject('No image data'); // imgData가 없을 경우 Promise를 거부
   }
 };

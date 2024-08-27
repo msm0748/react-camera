@@ -78,8 +78,12 @@ export default function ImageCrop({
         type: 'image/png',
       })
       .then(async (blob) => {
-        const base64 = await convertToBase64(blob);
-        setImage(base64);
+        try {
+          const base64 = await convertToBase64(blob);
+          setImage(base64);
+        } catch (error) {
+          console.log(error, 'error');
+        }
       });
 
     closeModal();
