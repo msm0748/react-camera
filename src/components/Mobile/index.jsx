@@ -54,7 +54,7 @@ export default function Mobile() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen relative">
+    <div className="flex flex-col items-center justify-center w-full h-full relative">
       <div>
         <Camera
           ref={cameraRef}

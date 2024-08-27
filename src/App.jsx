@@ -19,7 +19,9 @@ function App() {
     }
   }, []);
 
-  return <div className="App">{isMobile ? <Mobile /> : <Desktop />}</div>;
+  return (
+    <div className="App w-dvw h-dvh">{isMobile ? <Mobile /> : <Desktop />}</div>
+  );
 }
 
 export default App;

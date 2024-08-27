@@ -41,7 +41,7 @@ export default function Desktop() {
     // console.log(response);
   }, [image]);
   return (
-    <div className="w-dvw h-dvh flex items-center justify-center bg-gray-100">
+    <div className="w-full h-full flex items-center justify-center bg-gray-100">
       <div className="bg-white p-8 rounded-lg shadow-lg max-w-md w-full">
         <h2 className="text-2xl font-semibold text-gray-800 text-center mb-6">
           OCR
