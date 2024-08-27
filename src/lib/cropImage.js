@@ -1,4 +1,4 @@
-export const cropImage = async (image, crop) => {
+export const cropImage = async (image, crop, borderWidth) => {
   return new Promise((resolve, reject) => {
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
@@ -17,10 +17,10 @@ export const cropImage = async (image, crop) => {
 
       ctx.drawImage(img, 0, 0);
 
-      const x = crop.x;
-      const y = crop.y;
-      const width = crop.width;
-      const height = crop.height;
+      const x = crop.x - borderWidth;
+      const y = crop.y - borderWidth;
+      const width = crop.width - borderWidth * 7;
+      const height = crop.height - borderWidth * 4;
 
       try {
         const imageData = ctx.getImageData(x, y, width, height);

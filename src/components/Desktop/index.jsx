@@ -54,11 +54,9 @@ export default function Desktop() {
       const data = response.result.readResult.blocks[0].lines;
       setData(data);
       openResultModal();
-      console.log(data, 'data');
     } catch (error) {
       console.log(error, 'error');
     }
-    // console.log(response);
   }, [image, openResultModal]);
   return (
     <div className="w-full h-full bg-gray-100 flex items-center justify-center">
