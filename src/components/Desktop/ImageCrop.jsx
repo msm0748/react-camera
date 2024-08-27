@@ -24,13 +24,9 @@ const imageSize = {
   width: 800,
   height: 600,
 };
+Modal.setAppElement('#root');
 
-export default function ImageCrop({
-  imgSrc,
-  modalIsOpen,
-  closeModal,
-  setImage,
-}) {
+export default function ImageCrop({ imgSrc, isOpen, closeModal, setImage }) {
   const previewCanvasRef = useRef(null);
   const imgRef = useRef(null);
   const [crop, setCrop] = useState();
@@ -111,10 +107,8 @@ export default function ImageCrop({
     [completedCrop, scale, rotate]
   );
 
-  Modal.setAppElement('#root');
-
   return (
-    <Modal isOpen={modalIsOpen} style={customStyles}>
+    <Modal isOpen={isOpen} style={customStyles}>
       <div className="relative w-full h-full flex flex-col justify-between items-center">
         <div className="h-16 flex justify-between items-center px-6 bg-white shadow-md w-full">
           <h2 className="text-xl font-bold">이미지 자르기</h2>

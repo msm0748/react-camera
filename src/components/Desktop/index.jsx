@@ -3,18 +3,29 @@ import ImageCrop from './ImageCrop';
 import { api } from '../../lib/api';
 import moment from 'moment';
 import { convertToBase64 } from '../../lib/convertToBase64';
+import ResultModal from './ResultModal';
 
 export default function Desktop() {
   const [originalImage, setOriginalImage] = useState(null);
   const [image, setImage] = useState(null);
-  const [modalIsOpen, setIsOpen] = useState(false);
+  const [cropModalIsOpen, setCropModalIsOpen] = useState(false);
+  const [resultModalIsOpen, setResultModalIsOpen] = useState(false);
+  const [data, setData] = useState([]);
 
-  const openModal = useCallback(() => {
-    setIsOpen(true);
+  const openResultModal = useCallback(() => {
+    setResultModalIsOpen(true);
   }, []);
 
-  const closeModal = useCallback(() => {
-    setIsOpen(false);
+  const closeResultModal = useCallback(() => {
+    setResultModalIsOpen(false);
+  }, []);
+
+  const openCropModal = useCallback(() => {
+    setCropModalIsOpen(true);
+  }, []);
+
+  const closeCropModal = useCallback(() => {
+    setCropModalIsOpen(false);
   }, []);
 
   const handleImageChange = useCallback(async (imgData) => {
@@ -31,19 +42,26 @@ export default function Desktop() {
     const today = moment.now();
 
     try {
-      const response = await api.post('api/image', {
-        json: {
-          image: image,
-          capture_tick: today,
-        },
-      });
+      const response = await api
+        .post('api/image', {
+          json: {
+            image: image,
+            capture_tick: today,
+          },
+        })
+        .json();
+
+      const data = response.result.readResult.blocks[0].lines;
+      setData(data);
+      openResultModal();
+      console.log(data, 'data');
     } catch (error) {
       console.log(error, 'error');
     }
     // console.log(response);
-  }, [image]);
+  }, [image, openResultModal]);
   return (
-    <div className="w-full h-full flex items-center justify-center bg-gray-100">
+    <div className="w-full h-full bg-gray-100 flex items-center justify-center">
       <div className="bg-white p-8 rounded-lg shadow-lg max-w-md w-full">
         <h2 className="text-2xl font-semibold text-gray-800 text-center mb-6">
           OCR
@@ -72,7 +90,7 @@ export default function Desktop() {
         )}
         <div className="flex justify-between mt-6 space-x-4">
           <button
-            onClick={openModal}
+            onClick={openCropModal}
             id="resetButton"
             className="w-full py-2 px-4 bg-gray-400 text-white rounded-lg transition hover:bg-gray-500 disabled:bg-gray-300"
             disabled={!image}
@@ -89,14 +107,18 @@ export default function Desktop() {
           </button>
         </div>
       </div>
-      {modalIsOpen && (
-        <ImageCrop
-          closeModal={closeModal}
-          modalIsOpen={modalIsOpen}
-          imgSrc={originalImage}
-          setImage={setImage}
-        />
-      )}
+
+      <ImageCrop
+        closeModal={closeCropModal}
+        isOpen={cropModalIsOpen}
+        imgSrc={originalImage}
+        setImage={setImage}
+      />
+      <ResultModal
+        data={data}
+        isOpen={resultModalIsOpen}
+        closeModal={closeResultModal}
+      />
     </div>
   );
 }
