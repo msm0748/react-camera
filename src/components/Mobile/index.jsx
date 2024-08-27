@@ -1,5 +1,5 @@
 // CameraPage.js
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Camera } from 'react-camera-pro';
 import toast, { Toaster } from 'react-hot-toast';
 import { api } from '../../lib/api';
@@ -33,6 +33,14 @@ export default function Mobile() {
     }
   }, [guideLineRef]);
 
+  const openModal = useCallback(() => {
+    setModalIsOpen(true);
+  }, []);
+
+  const closeModal = useCallback(() => {
+    setModalIsOpen(false);
+  }, []);
+
   const handleCapture = async () => {
     if (cameraRef.current) {
       const photo = cameraRef.current.takePhoto();
@@ -41,7 +49,7 @@ export default function Mobile() {
         const cropPhoto = await cropImage(photo, guideLinePosition);
 
         setImage(cropPhoto);
-        setModalIsOpen(true);
+        openModal();
       } catch (error) {
         console.error('Error cropping image:', error);
         toast.error('Failed to crop image.');
@@ -123,7 +131,11 @@ export default function Mobile() {
           </button>
         </div>
       </div>
-      <MobileModal modalIsOpen={modalIsOpen} imgSrc={image} />
+      <MobileModal
+        modalIsOpen={modalIsOpen}
+        imgSrc={image}
+        closeModal={closeModal}
+      />
     </div>
   );
 }

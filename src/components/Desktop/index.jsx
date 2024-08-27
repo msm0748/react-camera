@@ -1,6 +1,5 @@
 import { useCallback, useState } from 'react';
 import ImageCrop from './ImageCrop';
-import { extractBase64Data } from '../../lib/extractBase64Data';
 import { api } from '../../lib/api';
 import moment from 'moment';
 
