@@ -6,15 +6,18 @@ import { api } from '../../lib/api';
 import moment from 'moment';
 import { IoIosFlash, IoIosFlashOff } from 'react-icons/io';
 import { IoCameraReverseOutline } from 'react-icons/io5';
+import MobileModal from './MobileModal';
+import { cropImage } from '../../lib/cropImage';
 
 export default function Mobile() {
   const cameraRef = useRef(null);
   const [image, setImage] = useState(null);
   const guideLineRef = useRef(null);
-  const previewCanvasRef = useRef(null);
   const [guideLinePosition, setGuideLinePosition] = useState();
   const [numberOfCameras, setNumberOfCameras] = useState(0);
   const [torchToggled, setTorchToggled] = useState(false); // 후레쉬
+
+  const [modalIsOpen, setModalIsOpen] = useState(false);
 
   useEffect(() => {
     if (guideLineRef.current) {
@@ -34,11 +37,19 @@ export default function Mobile() {
     }
   }, [guideLineRef]);
 
-  const handleCapture = () => {
+  const handleCapture = async () => {
     if (cameraRef.current) {
       const photo = cameraRef.current.takePhoto();
 
-      setImage(photo);
+      try {
+        const cropPhoto = await cropImage(photo, guideLinePosition);
+
+        setImage(cropPhoto);
+        setModalIsOpen(true);
+      } catch (error) {
+        console.error('Error cropping image:', error);
+        toast.error('Failed to crop image.');
+      }
     }
   };
 
@@ -46,48 +57,8 @@ export default function Mobile() {
     cropImage();
   };
 
-  const cropImage = () => {
-    const canvas = previewCanvasRef.current;
-    const ctx = canvas.getContext('2d');
-    const img = new Image();
-
-    img.onload = function () {
-      // Canvas 크기 설정
-      canvas.width = img.width;
-      canvas.height = img.height;
-
-      // 이미지를 캔버스에 그리기
-      ctx.drawImage(img, 0, 0);
-
-      // 자를 영역 설정
-      const x = guideLinePosition.x; // X 좌표
-      const y = guideLinePosition.y; // Y 좌표
-      const width = guideLinePosition.width; // 자를 폭
-      const height = guideLinePosition.height; // 자를 높이
-
-      // 자른 영역의 이미지 데이터 얻기
-      const imageData = ctx.getImageData(x, y, width, height);
-
-      // 새 캔버스에 자른 이미지 그리기
-      const croppedCanvas = document.createElement('canvas');
-      const croppedCtx = croppedCanvas.getContext('2d');
-      croppedCanvas.width = width;
-      croppedCanvas.height = height;
-      croppedCtx.putImageData(imageData, 0, 0);
-
-      // 자른 이미지의 Base64 데이터 얻기
-      const croppedBase64Data = croppedCanvas.toDataURL();
-
-      // 자른 이미지 Base64 데이터 출력
-      console.log('Cropped Base64 Data:', croppedBase64Data);
-    };
-
-    // Base64 데이터 디코딩 및 이미지 로드
-    img.src = image;
-  };
-
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 relative">
+    <div className="flex flex-col items-center justify-center min-h-screen relative">
       <div>
         <Camera
           ref={cameraRef}
@@ -108,28 +79,31 @@ export default function Mobile() {
         <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center">
           <div
             ref={guideLineRef}
-            className="border-4 border-green-500 w-2/3 h-2/3"
+            className="border-4 border-green-white opacity-60 w-2/3 h-28"
           ></div>
         </div>
       </div>
-      <div className="w-full flex justify-around items-center absolute z-50 bottom-10">
+      <div className="absolute w-1 h-1 bg-cyan-950 left-[69px] top-[402px]"></div>
+      <div className="w-full flex justify-around items-center absolute bottom-10">
         <div>
-          {/* {cameraRef.current?.torchSupported && ( */}
-          <button
-            className="flex justify-center items-center"
-            onClick={() => {
-              if (cameraRef.current) {
-                setTorchToggled(cameraRef.current.toggleTorch());
-              }
-            }}
-          >
-            {torchToggled ? (
-              <IoIosFlash size={40} />
-            ) : (
-              <IoIosFlashOff size={40} />
-            )}
-          </button>
-          {/* )} */}
+          {cameraRef.current?.torchSupported ? (
+            <button
+              className="flex justify-center items-center"
+              onClick={() => {
+                if (cameraRef.current) {
+                  setTorchToggled(cameraRef.current.toggleTorch());
+                }
+              }}
+            >
+              {torchToggled ? (
+                <IoIosFlash size={40} />
+              ) : (
+                <IoIosFlashOff size={40} />
+              )}
+            </button>
+          ) : (
+            <div className="w-10 h-10"></div>
+          )}
         </div>
         <div>
           <button
@@ -154,15 +128,7 @@ export default function Mobile() {
           </button>
         </div>
       </div>
-
-      {image && (
-        <div className="mt-4 z-50">
-          <img src={image} alt="Captured" className="w-40 h-40 object-cover" />
-        </div>
-      )}
-      <canvas ref={previewCanvasRef}></canvas>
-      <Toaster />
-      <button onClick={sendImageToBackend}>전송</button>
+      <MobileModal modalIsOpen={modalIsOpen} imgSrc={image} />
     </div>
   );
 }
