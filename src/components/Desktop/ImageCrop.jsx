@@ -7,6 +7,7 @@ import { canvasPreview } from '../../lib/canvasPreview';
 import 'react-image-crop/dist/ReactCrop.css';
 import ModalCloseButton from './ModalCloseButton';
 import ImageRotator from './ImageRotator';
+import { convertToBase64 } from '../../lib/convertToBase64';
 
 const customStyles = {
   content: {
@@ -28,24 +29,12 @@ export default function ImageCrop({
   imgSrc,
   modalIsOpen,
   closeModal,
-  handleImageChange,
+  setImage,
 }) {
   const previewCanvasRef = useRef(null);
   const imgRef = useRef(null);
-  const [crop, setCrop] = useState({
-    width: 100,
-    height: 100,
-    unit: '%',
-    x: 0,
-    y: 0,
-  });
-  const [completedCrop, setCompletedCrop] = useState({
-    unit: 'px',
-    width: imageSize.width,
-    height: imageSize.height,
-    x: 0,
-    y: 0,
-  });
+  const [crop, setCrop] = useState();
+  const [completedCrop, setCompletedCrop] = useState();
   const [scale, setScale] = useState(1);
   const [rotate, setRotate] = useState(0);
 
@@ -88,12 +77,13 @@ export default function ImageCrop({
       .convertToBlob({
         type: 'image/png',
       })
-      .then((blob) => {
-        handleImageChange(blob);
+      .then(async (blob) => {
+        const base64 = await convertToBase64(blob);
+        setImage(base64);
       });
 
     closeModal();
-  }, [closeModal, completedCrop, handleImageChange]);
+  }, [closeModal, completedCrop, setImage]);
 
   useDebounceEffect(
     async () => {

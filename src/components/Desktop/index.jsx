@@ -2,8 +2,10 @@ import { useCallback, useState } from 'react';
 import ImageCrop from './ImageCrop';
 import { api } from '../../lib/api';
 import moment from 'moment';
+import { convertToBase64 } from '../../lib/convertToBase64';
 
 export default function Desktop() {
+  const [originalImage, setOriginalImage] = useState(null);
   const [image, setImage] = useState(null);
   const [modalIsOpen, setIsOpen] = useState(false);
 
@@ -15,15 +17,10 @@ export default function Desktop() {
     setIsOpen(false);
   }, []);
 
-  const handleImageChange = useCallback((imgData) => {
-    if (imgData) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        const base64 = reader.result;
-        setImage(base64);
-      };
-      reader.readAsDataURL(imgData);
-    }
+  const handleImageChange = useCallback(async (imgData) => {
+    const base64 = await convertToBase64(imgData);
+    setImage(base64);
+    setOriginalImage(base64);
   }, []);
 
   const handleSubmit = useCallback(async () => {
@@ -92,8 +89,8 @@ export default function Desktop() {
         <ImageCrop
           closeModal={closeModal}
           modalIsOpen={modalIsOpen}
-          imgSrc={image}
-          handleImageChange={handleImageChange}
+          imgSrc={originalImage}
+          setImage={setImage}
         />
       )}
     </div>

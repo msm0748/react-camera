@@ -53,7 +53,12 @@ export default function ImageRotator({ rotate, setRotate }) {
 
   return (
     <div className="relative flex justify-center">
-      <span className="absolute bottom-[18px] text-sm">
+      <span
+        style={{
+          transform: 'translateX(calc(-50% - 5px))',
+        }}
+        className="absolute bottom-[18px] text-sm left-2/4"
+      >
         {parseInt(rotate)}°
       </span>
       <div
