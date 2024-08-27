@@ -1,5 +1,5 @@
 // CameraPage.js
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Camera } from 'react-camera-pro';
 import toast, { Toaster } from 'react-hot-toast';
 import { api } from '../../lib/api';
@@ -19,6 +19,8 @@ export default function Mobile() {
   const [numberOfCameras, setNumberOfCameras] = useState(0);
   const [torchToggled, setTorchToggled] = useState(false); // 후레쉬
   const [modalIsOpen, setModalIsOpen] = useState(false);
+
+  const [isTorched, setIsTorched] = useState(false);
 
   const [data, setData] = useState([]);
 
@@ -101,12 +103,15 @@ export default function Mobile() {
               'It is not possible to switch camera to different one because there is only one video device accessible.',
             canvas: 'Canvas is not supported.',
           }}
+          videoReadyCallback={() => {
+            setIsTorched(cameraRef.current?.torchSupported);
+          }}
         />
         {/* 촬영 가이드용 사각 박스 */}
         <div
           ref={guideLineRef}
           style={{
-            top: '100px',
+            top: '200px',
             left: '50%',
             transform: 'translateX(-50%)',
             borderWidth: `${guideLineBorderWidth}px`,
@@ -116,7 +121,7 @@ export default function Mobile() {
       </div>
       <div className="w-full flex justify-around items-center absolute bottom-10 text-white">
         <div>
-          {cameraRef.current?.torchSupported ? (
+          {isTorched ? (
             <button
               className="flex justify-center items-center"
               onClick={() => {
