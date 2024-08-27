@@ -4,6 +4,8 @@ import { Camera } from 'react-camera-pro';
 import toast, { Toaster } from 'react-hot-toast';
 import { api } from '../../lib/api';
 import moment from 'moment';
+import { IoIosFlash, IoIosFlashOff } from 'react-icons/io';
+import { IoCameraReverseOutline } from 'react-icons/io5';
 
 export default function Mobile() {
   const cameraRef = useRef(null);
@@ -11,40 +13,33 @@ export default function Mobile() {
   const guideLineRef = useRef(null);
   const previewCanvasRef = useRef(null);
   const [guideLinePosition, setGuideLinePosition] = useState();
-  const [devices, setDevices] = useState([]);
-  const [activeDeviceId, setActiveDeviceId] = useState(undefined);
   const [numberOfCameras, setNumberOfCameras] = useState(0);
   const [torchToggled, setTorchToggled] = useState(false); // 후레쉬
 
   useEffect(() => {
-    (async () => {
-      const devices = await navigator.mediaDevices.enumerateDevices();
-      const videoDevices = devices.filter((i) => i.kind === 'videoinput');
-      setDevices(videoDevices);
-    })();
-  });
+    if (guideLineRef.current) {
+      const guideLine = guideLineRef.current;
+
+      const guideLineX = guideLine.offsetLeft;
+      const guideLineY = guideLine.offsetTop;
+      const guideLineWidth = guideLine.offsetWidth;
+      const guideLineHeight = guideLine.offsetHeight;
+
+      setGuideLinePosition({
+        x: guideLineX,
+        y: guideLineY,
+        width: guideLineWidth,
+        height: guideLineHeight,
+      });
+    }
+  }, [guideLineRef]);
 
   const handleCapture = () => {
-    const photo = cameraRef.current.takePhoto();
+    if (cameraRef.current) {
+      const photo = cameraRef.current.takePhoto();
 
-    setImage(photo);
-    setGuideLine();
-  };
-
-  const setGuideLine = async () => {
-    const guideLine = guideLineRef.current;
-
-    const guideLineX = guideLine.offsetLeft;
-    const guideLineY = guideLine.offsetTop;
-    const guideLineWidth = guideLine.offsetWidth;
-    const guideLineHeight = guideLine.offsetHeight;
-
-    setGuideLinePosition({
-      x: guideLineX,
-      y: guideLineY,
-      width: guideLineWidth,
-      height: guideLineHeight,
-    });
+      setImage(photo);
+    }
   };
 
   const sendImageToBackend = () => {
@@ -57,7 +52,6 @@ export default function Mobile() {
     const img = new Image();
 
     img.onload = function () {
-      console.log(guideLinePosition);
       // Canvas 크기 설정
       canvas.width = img.width;
       canvas.height = img.height;
@@ -93,14 +87,13 @@ export default function Mobile() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
-      <div className="relative w-full h-80">
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 relative">
+      <div>
         <Camera
           ref={cameraRef}
           aspectRatio="cover"
           facingMode="environment"
           numberOfCamerasCallback={(i) => setNumberOfCameras(i)}
-          videoSourceDeviceId={activeDeviceId}
           errorMessages={{
             noCameraAccessible:
               'No camera device accessible. Please connect your camera or try a different browser.',
@@ -119,49 +112,48 @@ export default function Mobile() {
           ></div>
         </div>
       </div>
-      <button
-        onClick={handleCapture}
-        className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg z-50"
-      >
-        Capture Image
-      </button>
-
-      <select
-        onChange={(event) => {
-          setActiveDeviceId(event.target.value);
-        }}
-      >
-        {devices.map((d) => (
-          <option key={d.deviceId} value={d.deviceId}>
-            {d.label}
-          </option>
-        ))}
-      </select>
-
-      {cameraRef.current?.torchSupported && (
-        <button
-          className={torchToggled ? 'toggled' : ''}
-          onClick={() => {
-            if (cameraRef.current) {
-              setTorchToggled(cameraRef.current.toggleTorch());
-            }
-          }}
-        >
-          후레쉬
-        </button>
-      )}
-
-      <button
-        disabled={numberOfCameras <= 1}
-        onClick={() => {
-          if (cameraRef.current) {
-            const result = cameraRef.current.switchCamera();
-            console.log(result);
-          }
-        }}
-      >
-        카메라 전환
-      </button>
+      <div className="w-full flex justify-around items-center absolute z-50 bottom-10">
+        <div>
+          {/* {cameraRef.current?.torchSupported && ( */}
+          <button
+            className="flex justify-center items-center"
+            onClick={() => {
+              if (cameraRef.current) {
+                setTorchToggled(cameraRef.current.toggleTorch());
+              }
+            }}
+          >
+            {torchToggled ? (
+              <IoIosFlash size={40} />
+            ) : (
+              <IoIosFlashOff size={40} />
+            )}
+          </button>
+          {/* )} */}
+        </div>
+        <div>
+          <button
+            onClick={handleCapture}
+            className="p-1 border-black border-[4px] rounded-full"
+          >
+            <div className="w-6 h-6 bg-black rounded-full"></div>
+          </button>
+        </div>
+        <div>
+          <button
+            className="flex justify-center items-center"
+            disabled={numberOfCameras <= 1}
+            onClick={() => {
+              if (cameraRef.current) {
+                const result = cameraRef.current.switchCamera();
+                console.log(result);
+              }
+            }}
+          >
+            <IoCameraReverseOutline size={40} />
+          </button>
+        </div>
+      </div>
 
       {image && (
         <div className="mt-4 z-50">
