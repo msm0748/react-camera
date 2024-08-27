@@ -26,8 +26,6 @@ export default function Desktop() {
   }, []);
 
   const handleSubmit = useCallback(async () => {
-    const extractBase64 = extractBase64Data(image);
-
     const today = moment.now();
 
     try {

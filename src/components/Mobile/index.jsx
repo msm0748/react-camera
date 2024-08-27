@@ -1,10 +1,9 @@
 // CameraPage.js
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Camera } from 'react-camera-pro';
 import toast, { Toaster } from 'react-hot-toast';
 import { api } from '../../lib/api';
 import moment from 'moment';
-import { extractBase64Data } from '../../lib/extractBase64Data';
 
 export default function Mobile() {
   const cameraRef = useRef(null);
@@ -12,10 +11,23 @@ export default function Mobile() {
   const guideLineRef = useRef(null);
   const previewCanvasRef = useRef(null);
   const [guideLinePosition, setGuideLinePosition] = useState();
+  const [devices, setDevices] = useState([]);
+  const [activeDeviceId, setActiveDeviceId] = useState(undefined);
+  const [numberOfCameras, setNumberOfCameras] = useState(0);
+  const [torchToggled, setTorchToggled] = useState(false); // 후레쉬
+
+  useEffect(() => {
+    (async () => {
+      const devices = await navigator.mediaDevices.enumerateDevices();
+      const videoDevices = devices.filter((i) => i.kind === 'videoinput');
+      setDevices(videoDevices);
+    })();
+  });
 
   const handleCapture = () => {
     const photo = cameraRef.current.takePhoto();
 
+    console.log(cameraRef.current.switchCamera());
     setImage(photo);
     setGuideLine();
   };
@@ -84,7 +96,13 @@ export default function Mobile() {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
       <div className="relative w-full h-80">
-        <Camera ref={cameraRef} aspectRatio="cover" facingMode="environment" />
+        <Camera
+          ref={cameraRef}
+          aspectRatio="cover"
+          facingMode="environment"
+          numberOfCamerasCallback={(i) => setNumberOfCameras(i)}
+          videoSourceDeviceId={activeDeviceId}
+        />
         {/* 촬영 가이드용 사각 박스 */}
         <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center">
           <div
@@ -98,6 +116,43 @@ export default function Mobile() {
         className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg z-50"
       >
         Capture Image
+      </button>
+
+      <select
+        onChange={(event) => {
+          setActiveDeviceId(event.target.value);
+        }}
+      >
+        {devices.map((d) => (
+          <option key={d.deviceId} value={d.deviceId}>
+            {d.label}
+          </option>
+        ))}
+      </select>
+
+      {cameraRef.current?.torchSupported && (
+        <button
+          className={torchToggled ? 'toggled' : ''}
+          onClick={() => {
+            if (cameraRef.current) {
+              setTorchToggled(cameraRef.current.toggleTorch());
+            }
+          }}
+        >
+          후레쉬
+        </button>
+      )}
+
+      <button
+        disabled={numberOfCameras <= 1}
+        onClick={() => {
+          if (cameraRef.current) {
+            const result = cameraRef.current.switchCamera();
+            console.log(result);
+          }
+        }}
+      >
+        카메라 전환
       </button>
 
       {image && (
