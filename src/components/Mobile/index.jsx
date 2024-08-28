@@ -13,6 +13,7 @@ const guideLineBorderWidth = 4;
 
 export default function Mobile() {
   const cameraRef = useRef(null);
+  const [mobileSize, setMobileSize] = useState(); // 모바일 화면 크기
   const [image, setImage] = useState(null);
   const guideLineRef = useRef(null);
   const [guideLinePosition, setGuideLinePosition] = useState();
@@ -23,6 +24,13 @@ export default function Mobile() {
   const [isTorched, setIsTorched] = useState(false);
 
   const [data, setData] = useState([]);
+
+  useEffect(() => {
+    setMobileSize({
+      width: window.innerWidth,
+      height: window.innerHeight,
+    });
+  }, []);
 
   useEffect(() => {
     if (guideLineRef.current) {
@@ -51,14 +59,11 @@ export default function Mobile() {
       const photo = cameraRef.current.takePhoto();
 
       try {
-        const cropPhoto = await cropImage(
-          photo,
-          guideLinePosition,
-          guideLineBorderWidth
-        );
+        const cropPhoto = await cropImage(photo, guideLinePosition, mobileSize);
 
         setImage(cropPhoto);
         openModal(); // 나중에 여기에 onSubmit 넣어야 함
+        // onSubmit();
       } catch (error) {
         console.error('Error cropping image:', error);
         toast.error('Failed to crop image.');
@@ -109,7 +114,6 @@ export default function Mobile() {
         />
         {/* 촬영 가이드용 사각 박스 */}
         <div
-          ref={guideLineRef}
           style={{
             top: '200px',
             left: '50%',
@@ -117,7 +121,9 @@ export default function Mobile() {
             borderWidth: `${guideLineBorderWidth}px`,
           }}
           className="absolute border-white opacity-60 w-4/5 h-36"
-        ></div>
+        >
+          <div ref={guideLineRef} className="w-full h-full"></div>
+        </div>
       </div>
       <div className="w-full flex justify-around items-center absolute bottom-10 text-white">
         <div>

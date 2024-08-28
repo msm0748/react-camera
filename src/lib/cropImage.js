@@ -1,14 +1,14 @@
-export const cropImage = async (image, crop) => {
+export const cropImage = async (image, crop, mobileSize) => {
   return new Promise((resolve, reject) => {
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
     const img = new Image();
 
     img.onload = function () {
-      canvas.width = img.width;
-      canvas.height = img.height;
+      canvas.width = mobileSize.width;
+      canvas.height = mobileSize.height;
 
-      ctx.drawImage(img, 0, 0);
+      ctx.drawImage(img, 0, 0, mobileSize.width, mobileSize.height);
 
       const x = crop.x;
       const y = crop.y;
