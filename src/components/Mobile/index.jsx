@@ -1,4 +1,3 @@
-// CameraPage.js
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Camera } from 'react-camera-pro';
 import toast, { Toaster } from 'react-hot-toast';
@@ -8,11 +7,13 @@ import { IoIosFlash, IoIosFlashOff } from 'react-icons/io';
 import { IoCameraReverseOutline } from 'react-icons/io5';
 import MobileModal from './MobileModal';
 import { cropImage } from '../../lib/cropImage';
+import styles from './styles.module.css';
 
 const guideLineBorderWidth = 4;
 
 export default function Mobile() {
   const cameraRef = useRef(null);
+  const audioRef = useRef(null);
   const [mobileSize, setMobileSize] = useState(); // 모바일 화면 크기
   const [image, setImage] = useState(null);
   const guideLineRef = useRef(null);
@@ -20,8 +21,8 @@ export default function Mobile() {
   const [numberOfCameras, setNumberOfCameras] = useState(0);
   const [torchToggled, setTorchToggled] = useState(false); // 후레쉬
   const [modalIsOpen, setModalIsOpen] = useState(false);
-
   const [isTorched, setIsTorched] = useState(false);
+  const [showFlash, setShowFlash] = useState(false);
 
   const [data, setData] = useState([]);
 
@@ -46,6 +47,16 @@ export default function Mobile() {
     }
   }, [guideLineRef]);
 
+  const handleFlash = () => {
+    // 애니메이션 클래스를 적용하여 깜빡거리는 효과를 실행
+    setShowFlash(true);
+
+    // 애니메이션이 끝난 후 클래스를 제거
+    setTimeout(() => {
+      setShowFlash(false);
+    }, 200); // 애니메이션 지속 시간과 일치시켜야 함
+  };
+
   const openModal = useCallback(() => {
     setModalIsOpen(true);
   }, []);
@@ -57,13 +68,16 @@ export default function Mobile() {
   const handleCapture = async () => {
     if (cameraRef.current) {
       const photo = cameraRef.current.takePhoto();
+      audioRef.current.play();
+      handleFlash();
 
       try {
+        // setImage(photo);
         const cropPhoto = await cropImage(photo, guideLinePosition, mobileSize);
 
         setImage(cropPhoto);
-        openModal(); // 나중에 여기에 onSubmit 넣어야 함
-        // onSubmit();
+        // openModal(); // 나중에 여기에 onSubmit 넣어야 함
+        await onSubmit(cropPhoto);
       } catch (error) {
         console.error('Error cropping image:', error);
         toast.error('Failed to crop image.');
@@ -71,13 +85,13 @@ export default function Mobile() {
     }
   };
 
-  const onSubmit = async () => {
+  const onSubmit = async (cropPhoto) => {
     const today = moment.now();
     try {
       const response = await api
         .post('api/image', {
           json: {
-            image: image,
+            image: cropPhoto,
             capture_tick: today,
           },
         })
@@ -88,6 +102,7 @@ export default function Mobile() {
       openModal();
     } catch (error) {
       console.log(error, 'error');
+      toast.error('문자를 인식할 수 없습니다. 다시 시도해 주세요.');
     }
   };
 
@@ -169,7 +184,17 @@ export default function Mobile() {
           </button>
         </div>
       </div>
-      {modalIsOpen && <MobileModal imgSrc={image} closeModal={closeModal} />}
+      <audio
+        ref={audioRef}
+        className="hidden"
+        src="alarm.mp3"
+        preload="auto"
+      ></audio>
+      {modalIsOpen && (
+        <MobileModal imgSrc={image} closeModal={closeModal} data={data} />
+      )}
+      {showFlash && <div className={styles.flash}></div>}
+      <Toaster />
     </div>
   );
 }

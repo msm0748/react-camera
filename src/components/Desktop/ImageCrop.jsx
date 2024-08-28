@@ -1,4 +1,4 @@
-import React, { useState, useRef, useCallback, useEffect } from 'react';
+import React, { useState, useRef, useCallback } from 'react';
 import ReactCrop from 'react-image-crop';
 import Modal from '../common/Modal';
 import { useDebounceEffect } from '../../hooks/useDebounceEffect';
