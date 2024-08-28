@@ -5,8 +5,8 @@ import { useDebounceEffect } from '../../hooks/useDebounceEffect';
 import { canvasPreview } from '../../lib/canvasPreview';
 
 import 'react-image-crop/dist/ReactCrop.css';
-import ModalCloseButton from './ModalCloseButton';
-import ImageRotator from './ImageRotator';
+import ModalCloseButton from '../common/ModalCloseButton';
+import ImageRotator from './cropControls/ImageRotator';
 import { convertToBase64 } from '../../lib/convertToBase64';
 
 const imageSize = {

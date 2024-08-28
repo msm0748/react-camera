@@ -1,6 +1,6 @@
 import Modal from '../common/Modal';
 
-import ModalCloseButton from './ModalCloseButton';
+import ModalCloseButton from '../common/ModalCloseButton';
 
 export default function ResultModal({ data, closeModal }) {
   return (
