@@ -4,6 +4,7 @@ import { api } from '../../lib/api';
 import moment from 'moment';
 import { convertToBase64 } from '../../lib/convertToBase64';
 import ResultModal from './ResultModal';
+import toast, { Toaster } from 'react-hot-toast';
 
 export default function Desktop() {
   const [originalImage, setOriginalImage] = useState(null);
@@ -56,6 +57,7 @@ export default function Desktop() {
       openResultModal();
     } catch (error) {
       console.log(error, 'error');
+      toast.error('문자를 인식할 수 없습니다. 다시 시도해 주세요.');
     }
   }, [image, openResultModal]);
   return (
@@ -121,6 +123,7 @@ export default function Desktop() {
           closeModal={closeResultModal}
         />
       )}
+      <Toaster />
     </div>
   );
 }
