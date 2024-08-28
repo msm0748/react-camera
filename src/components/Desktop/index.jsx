@@ -106,17 +106,21 @@ export default function Desktop() {
         </div>
       </div>
 
-      <ImageCrop
-        closeModal={closeCropModal}
-        isOpen={cropModalIsOpen}
-        imgSrc={originalImage}
-        setImage={setImage}
-      />
-      <ResultModal
-        data={data}
-        isOpen={resultModalIsOpen}
-        closeModal={closeResultModal}
-      />
+      {cropModalIsOpen && (
+        <ImageCrop
+          closeModal={closeCropModal}
+          imgSrc={originalImage}
+          setImage={setImage}
+        />
+      )}
+
+      {resultModalIsOpen && (
+        <ResultModal
+          data={data}
+          isOpen={resultModalIsOpen}
+          closeModal={closeResultModal}
+        />
+      )}
     </div>
   );
 }

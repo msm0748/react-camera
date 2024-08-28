@@ -1,6 +1,6 @@
-import React, { useState, useRef, useCallback } from 'react';
+import React, { useState, useRef, useCallback, useEffect } from 'react';
 import ReactCrop from 'react-image-crop';
-import Modal from 'react-modal';
+import Modal from '../common/Modal';
 import { useDebounceEffect } from '../../hooks/useDebounceEffect';
 import { canvasPreview } from '../../lib/canvasPreview';
 
@@ -9,24 +9,17 @@ import ModalCloseButton from './ModalCloseButton';
 import ImageRotator from './ImageRotator';
 import { convertToBase64 } from '../../lib/convertToBase64';
 
-const customStyles = {
-  content: {
-    inset: '0',
-    border: 'none',
-    padding: '0',
-    borderRadius: '0',
-    width: '100%',
-    height: '100%',
-  },
-};
-
 const imageSize = {
   width: 800,
   height: 600,
 };
-Modal.setAppElement('#root');
 
-export default function ImageCrop({ imgSrc, isOpen, closeModal, setImage }) {
+const customStyle = {
+  width: '100%',
+  height: '100%',
+};
+
+export default function ImageCrop({ imgSrc, closeModal, setImage }) {
   const previewCanvasRef = useRef(null);
   const imgRef = useRef(null);
   const [crop, setCrop] = useState();
@@ -35,6 +28,12 @@ export default function ImageCrop({ imgSrc, isOpen, closeModal, setImage }) {
   const [rotate, setRotate] = useState(0);
 
   const onApplyCropClick = useCallback(async () => {
+    if (!crop) {
+      // crop이 없으면 그냥 원본 이미지를 그대로 사용
+      setImage(imgSrc);
+      return closeModal();
+    }
+
     const image = imgRef.current;
     const previewCanvas = previewCanvasRef.current;
     if (!image || !previewCanvas || !completedCrop) {
@@ -83,7 +82,7 @@ export default function ImageCrop({ imgSrc, isOpen, closeModal, setImage }) {
       });
 
     closeModal();
-  }, [closeModal, completedCrop, setImage]);
+  }, [closeModal, completedCrop, setImage, crop, imgSrc]);
 
   useDebounceEffect(
     async () => {
@@ -108,7 +107,7 @@ export default function ImageCrop({ imgSrc, isOpen, closeModal, setImage }) {
   );
 
   return (
-    <Modal isOpen={isOpen} style={customStyles}>
+    <Modal style={customStyle}>
       <div className="relative w-full h-full flex flex-col justify-between items-center">
         <div className="h-16 flex justify-between items-center px-6 bg-white shadow-md w-full">
           <h2 className="text-xl font-bold">이미지 자르기</h2>

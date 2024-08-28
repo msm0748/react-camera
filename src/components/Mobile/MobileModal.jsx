@@ -1,22 +1,14 @@
-import Modal from 'react-modal';
+import Modal from '../common/Modal';
 import { RxReload } from 'react-icons/rx';
 
 const customStyles = {
-  content: {
-    inset: '0',
-    border: 'none',
-    padding: '0',
-    borderRadius: '0',
-    width: '100%',
-    height: '100%',
-  },
+  width: '100%',
+  height: '100%',
 };
 
-Modal.setAppElement('#root');
-
-export default function MobileModal({ modalIsOpen, imgSrc, closeModal }) {
+export default function MobileModal({ imgSrc, closeModal }) {
   return (
-    <Modal style={customStyles} isOpen={modalIsOpen}>
+    <Modal style={customStyles}>
       <div className="bg-white w-full h-full p-8">
         <div>
           <div className="flex justify-end">

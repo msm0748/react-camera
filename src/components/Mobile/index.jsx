@@ -163,11 +163,7 @@ export default function Mobile() {
           </button>
         </div>
       </div>
-      <MobileModal
-        modalIsOpen={modalIsOpen}
-        imgSrc={image}
-        closeModal={closeModal}
-      />
+      {modalIsOpen && <MobileModal imgSrc={image} closeModal={closeModal} />}
     </div>
   );
 }

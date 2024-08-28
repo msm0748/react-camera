@@ -1,27 +1,16 @@
-import Modal from 'react-modal';
+import Modal from '../common/Modal';
 
 import ModalCloseButton from './ModalCloseButton';
 
-const customStyles = {
-  content: {
-    top: '50%',
-    left: '50%',
-    right: 'auto',
-    bottom: 'auto',
-    marginRight: '-50%',
-    transform: 'translate(-50%, -50%)',
-  },
-};
-
-export default function ResultModal({ data, isOpen, closeModal }) {
+export default function ResultModal({ data, closeModal }) {
   return (
-    <Modal isOpen={isOpen} style={customStyles}>
+    <Modal>
       <div className="w-96 min-h-96">
-        <div className="flex justify-between items-center">
+        <div className="flex justify-between items-center p-2 border-b-[1px] border-black">
           <h2>결과 화면</h2>
           <ModalCloseButton closeModal={closeModal} />
         </div>
-        <div className="py-10 max-h-60">
+        <div className="p-2 mt-4 max-h-60">
           <ul>
             {data.map((item, index) => (
               <li key={index}>{item.text}</li>
